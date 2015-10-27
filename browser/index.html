@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+  <head>
+    <link href="lib/angular-material/angular-material.min.css" rel="stylesheet" type="text/css">
+    <link href="lib/angular-material-icons/angular-material-icons.css" rel="stylesheet" type="text/css">
+    <link href="stylesheet/index.css" rel="stylesheet" type="text/css">
+    <title>Chateo</title>
+    <script>
+      window.moment = require('moment')
+    </script>
+  </head>
+  <body layout="column" ng-app="Chateo" ng-controller="appController">
+    <md-toolbar class="md-whiteframe-z2" layout="row">
+      <div class="md-toolbar-tools">
+        <md-button aria-label="sidebar" class="md-icon-button" hide-gt-sm ng-click="toggleSidenav('left')">
+          <ng-md-icon id="sidebarButton" icon="menu" size="32"></ng-md-icon>
+        </md-button>
+        <h1>Chateo</h1>
+        <span flex></span>
+        <md-menu ng-if="_.userLogged">
+          <md-button aria-label="menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+            <ng-md-icon icon="more_vert" id="menuButton" size="32"></ng-md-icon>
+          </md-button>
+          <md-menu-content width="3">
+            <md-menu-item>
+              <md-button ng-click="settings()">
+                <ng-md-icon icon="settings" size="24"></ng-md-icon>
+                Settings</md-button>
+            </md-menu-item>
+            <md-menu-item>
+              <md-button ng-click="info()">
+                <ng-md-icon icon="info_outline" size="24"></ng-md-icon>
+                Info</md-button>
+            </md-menu-item>
+            <!--<md-menu-item>
+              <md-button ng-click="logout()">
+                <ng-md-icon icon="logout" size="24"></ng-md-icon>
+                Logout</md-button>
+            </md-menu-item>-->
+          </md-menu-content>
+        </md-menu>
+      </div>
+    </md-toolbar>
+    <div flex layout="row" style="height:100%;">
+      <md-sidenav class="md-sidenav-left md-whiteframe-z2" layout="column" md-component-id="left" md-is-locked-open="_.userLogged && $mdMedia('gt-sm')">
+        <md-content class="md-padding" flex layout="column">
+          <md-list>
+            <md-list-item>
+              <p class="userSideEle">
+                <ng-md-icon icon="person_outline" size="16"></ng-md-icon>
+                <span class="textoverflow">{{ _.username }}</span></p>
+            </md-list-item>
+            <md-divider></md-divider>
+            <md-list-item ng-click="openChat('chat')" class="chatList" id="list-chat">
+              <p class="userSideEle">
+                <ng-md-icon icon="chat" size="16"></ng-md-icon>
+                Chat <span id="chat" class="notificationBadge">0</span></p>
+            </md-list-item>
+            <md-divider></md-divider>
+            <md-list-item ng-repeat="user in _.connectedUsers"  ng-click="openChat(user)"  class="chatList" id="list-{{ user }}">
+              <p class="userSideEle">
+                <ng-md-icon icon="person" size="16"></ng-md-icon>
+                <span class="textoverflow">{{ ::user }}</span> <span id="{{ user }}" class="notificationBadge">0</span></p>
+            </md-list-item>
+          </md-list>
+        </md-content>
+      </md-sidenav>
+      <div flex id="content" layout="column">
+        <ng-view style="height:100%"></ng-view>
+      </div>
+    </div>
+    <script src="lib/angular/angular.min.js"></script>
+    <script src="lib/angular-moment/angular-moment.min.js"></script>
+    <script src="lib/angular-route/angular-route.min.js"></script>
+    <script src="lib/angular-animate/angular-animate.min.js"></script>
+    <script src="lib/angular-aria/angular-aria.min.js"></script>
+    <script src="lib/angular-material/angular-material.min.js"></script>
+    <script src="lib/angular-material-icons/angular-material-icons.min.js"></script>
+    <script src="lib/angular-scroll-glue/src/scrollglue.js"></script>
+    <script src="javascript/app.js"></script>
+    <script src="javascript/controllers.js"></script>
+  </body>
+</html>

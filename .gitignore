@@ -1,0 +1,7 @@
+browser/javascript/
+browser/lib/
+app/main.js
+node_modules
+npm-debug.log
+.DS_Store
+ChateoDB

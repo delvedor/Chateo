@@ -1,0 +1,152 @@
+html, body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.md-toolbar-tools h1 {
+  font-size: 1.2em;
+  font-weight: inherit;
+  margin: inherit;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+#menuButton {
+  color: #ffffff;
+  margin-top: -10px;
+}
+
+.loginCard {
+  width: 80%;
+  margin: 0 auto;
+  margin-top: 10%;
+}
+
+.activeBackground {
+  background-color: #f5f5f5;
+}
+
+.activeBackground p {
+  font-weight: bold;
+}
+
+.loginCard md-card-footer {
+  text-align: center;
+}
+
+.md-sidenav-left {
+  width: 300px !important;
+  min-width: 300px !important;
+  max-width: 300px !important;
+}
+
+.userSideEle {
+  font-size: 1em;
+  position: relative;
+}
+
+.textoverflow {
+  white-space: nowrap;
+  width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  margin-bottom: -10px;
+}
+
+#propertyDiv {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 0.8em;
+}
+
+#propertyDiv p a {
+  cursor: pointer;
+  color: #0D47A1;
+}
+
+#content {
+  background-color: #f5f5f5;
+  padding: 10px;
+  width: 100%;
+  overflow: scroll;
+}
+
+.md-avatar {
+  background-color: #e0e0e0;
+  text-align: center;
+  line-height: 42px;
+  font-size: 1.2em;
+  color: #616161;
+  text-transform: uppercase;
+}
+
+.md-list-item-text {
+  background-color: #fafafa;
+  padding: 5px 15px;
+  border-radius: 2px;
+}
+
+.chatArea {
+  position: fixed;
+  top: 65px;
+  bottom: 80px;
+  left: 300px;
+  right: 0;
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  overflow: scroll;
+}
+
+.messageArea {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 300px;
+  z-index: 10;
+  background-color: #fafafa;
+  margin: 0 auto;
+  margin-left: -10px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+md-list-item {
+  margin-top: 10px;
+}
+
+@media (max-width: 600px) {
+  .messageArea {
+    left: 0;
+  }
+  .chatArea {
+    left: 0;
+  }
+  #menuButton, #sidebarButton {
+    margin-top: -15px;
+  }
+}
+
+.notificationBadge {
+  width: 30px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  font-size: 0.8em;
+  font-weight: bold;
+  border-radius: 2px;
+  background-color: #F50057;
+  color: #ffffff;
+  display: none;
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+}

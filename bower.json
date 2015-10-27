@@ -1,0 +1,28 @@
+{
+  "name": "chateo",
+  "version": "0.1.0",
+  "homepage": "https://github.com/delvedor/Chateo",
+  "authors": [
+    "delvedor <tommydelved@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "GPLv2",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.7",
+    "angular-material": "~0.11.4",
+    "angular-route": "~1.4.7",
+    "angular-material-icons": "~0.6.0",
+    "angular-scroll-glue": "~2.0.6",
+    "angular-moment": "~0.10.3"
+  }
+}

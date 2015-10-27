@@ -1,0 +1,16 @@
+<md-list class="chatArea" scroll-glue>
+  <md-list-item class="md-3-line" ng-repeat="message in _.messages[param]">
+    <div class="md-avatar">{{ ::getFirstLetter(message.user) }}</div>
+    <div class="md-list-item-text chatMessage" layout="column">
+      <h4 ng-style="{'font-size': _.fontSize}">{{ ::message.user }}</h4>
+      <p ng-style="{'font-size': _.fontSize}" am-time-ago="{{ ::message.time }}"></p>
+      <p ng-style="{'font-size': _.fontSize, 'color': message.color}">{{ ::message.text }}</p>
+    </div>
+  </md-list-item>
+</md-list>
+<div class="messageArea md-whiteframe-z2">
+    <md-input-container flex>
+      <label>Message</label>
+      <textarea name="message" ng-model="chatMessage" ng-keyup="sendMessage($event)"></textarea>
+    </md-input-container>
+</div>
