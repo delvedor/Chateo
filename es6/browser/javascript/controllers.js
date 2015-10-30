@@ -2,7 +2,7 @@ import ipc from 'ipc'
 
 ;(() => {
   angular.module('Chateo')
-    .controller('appController', ($scope, $mdSidenav, $location, $timeout, $routeParams) => {
+    .controller('appController', ($scope, $mdSidenav, $location, $timeout, $routeParams, $mdToast) => {
       $scope._ = {
         userLogged: false,
         username: null,
@@ -37,7 +37,6 @@ import ipc from 'ipc'
       }
 
       $scope.openChat = (chatName) => {
-        console.log(chatName)
         $location.path(`/chat/${chatName}`)
       }
 
@@ -48,46 +47,58 @@ import ipc from 'ipc'
         })
       })
 
-      ipc.on('newMessage', (msg) => {
-        console.log(msg)
+      ipc.on('userLogin', (user) => {
         $timeout(() => {
-          if (msg.type === 'message') {
-            $scope._.messages.chat.push(msg.content)
-            if ($scope._.messages.chat.length > 1000) $scope._.messages.chat.shift() // keeps in the UI only the last 1000 messages
-            $scope.$apply()
-            if ($routeParams.chat !== 'chat') {
-              let element = document.getElementById('chat')
-              element.style.display = 'inline-block'
-              if (element.textContent === '99' || element.textContent === '99+')
-                element.textContent = '99+'
-              else
-                element.textContent = Number(element.textContent) + 1
-            }
-          } else if (msg.type === 'privateMessage') {
-            if (!$scope._.messages[msg.content.user])
-              $scope._.messages[msg.content.user] = []
-            $scope._.messages[msg.content.user].push(msg.content)
-            if ($routeParams.chat !== msg.content.user) {
-              let element = document.getElementById(msg.content.user)
-              element.style.display = 'inline-block'
-              if (element.textContent === '99' || element.textContent === '99+')
-                element.textContent = '99+'
-              else
-                element.textContent = Number(element.textContent) + 1
-            }
-          }
+          let date = new Date()
+          $scope._.messages.chat.push({user: 'chateoserver', text: `${date.getHours()}.${date.getMinutes()}: ${user} connected`})
+          $scope.$apply()
         })
       })
 
-      $scope.$on('$routeChangeSuccess', function(next, current, previous) {
+      ipc.on('userLogout', (user) => {
+        $timeout(() => {
+          let date = new Date()
+          $scope._.messages.chat.push({user: 'chateoserver', text: `${date.getHours()}.${date.getMinutes()}: ${user} disconnected`})
+          $scope.$apply()
+        })
+      })
+
+      ipc.on('newMessage', (msg) => {
+        $timeout(() => {
+          let element = null
+          if (!$scope._.connectedUsers[msg.content.user]) ipc.send('getConnectedUsers')
+          if (msg.type === 'message') {
+            $scope._.messages.chat.push(msg.content)
+            // if ($scope._.messages.chat.length > 1000) $scope._.messages.chat.shift() // keeps in the UI only the last 1000 messages
+            if ($routeParams.chat !== 'chat') element = document.getElementById('chat')
+          } else if (msg.type === 'privateMessage') {
+            if (!$scope._.messages[msg.content.user]) $scope._.messages[msg.content.user] = []
+            $scope._.messages[msg.content.user].push(msg.content)
+            if ($routeParams.chat !== msg.content.user) element = document.getElementById(msg.content.user)
+          }
+          if (element) {
+            element.style.display = 'inline-block'
+            if (element.textContent === '99' || element.textContent === '99+') {
+              element.textContent = '99+'
+            } else {
+              element.textContent = Number(element.textContent) + 1
+            }
+          }
+          $scope.$apply()
+        })
+      })
+
+      $scope.$on('$routeChangeSuccess', function (next, current, previous) {
+        if (previous && previous.loadedTemplateUrl === 'templates/login.html') ipc.send('getConnectedUsers')
         let ele = document.getElementsByClassName('chatList')
-        for (let i = 0, len = ele.length; i < len; i++)
-          ele[i].classList.remove('activeBackground')
-        if (current.params.chat && document.getElementById(current.params.chat).style.display !== 'none') {
+        for (let i = 0, len = ele.length; i < len; i++) ele[i].classList.remove('activeBackground')
+        if (current.params.chat) {
           document.getElementById(`list-${current.params.chat}`).classList.add('activeBackground')
           ele = document.getElementById(current.params.chat)
-          ele.textContent = 0
-          ele.style.display = 'none'
+          if (ele.style.display !== 'none') {
+            ele.textContent = 0
+            ele.style.display = 'none'
+          }
         }
       })
     })
@@ -95,7 +106,7 @@ import ipc from 'ipc'
     .controller('loginController', ($scope, $location, $mdToast) => {
       $scope.login = (username) => {
         if (!username) return
-        ipc.send('sendNewUser', username);
+        ipc.send('sendNewUser', username)
         ipc.on('userAvailable', (bool) => {
           if (bool) {
             $scope._.username = username
@@ -117,18 +128,15 @@ import ipc from 'ipc'
 
       $scope.changeFontSize = (fontSize) => {
         $scope._.fontSize = `${fontSize}em`
-        console.log($scope._.fontSize);
       }
 
       $scope.changeColor = (color) => {
         $scope._.color = color
       }
-
     })
 
     .controller('chatController', ($scope, $location, $timeout, $routeParams) => {
       $scope.param = $routeParams.chat
-      console.log($scope._.messages[$routeParams.chat])
       $scope.getFirstLetter = (username) => {
         return username.charAt(0)
       }
@@ -141,8 +149,7 @@ import ipc from 'ipc'
               ipc.send('sendMessage', {user: $scope._.username, time: time, text: $scope.chatMessage, color: $scope._.color})
               $scope._.messages.chat.push({user: $scope._.username, time: time, text: $scope.chatMessage, color: $scope._.color})
             } else {
-              if (!$scope._.messages[$scope.param])
-                $scope._.messages[$scope.param] = []
+              if (!$scope._.messages[$scope.param]) $scope._.messages[$scope.param] = []
               ipc.send('sendMessage', {user: $scope._.username, time: time, text: $scope.chatMessage, recipient: $scope.param, color: $scope._.color})
               $scope._.messages[$scope.param].push({user: $scope._.username, time: time, text: $scope.chatMessage, recipient: $scope.param, color: $scope._.color})
             }
@@ -154,12 +161,11 @@ import ipc from 'ipc'
     })
 
     .controller('infoController', ($scope) => {
-      ipc.send('getVersion');
+      ipc.send('getVersion')
       ipc.on('setVersion', (v) => {
-        console.log(v)
         document.getElementById('versionNumber').textContent = `delvedor v${v.version.major}.${v.version.minor}.${v.version.patch} - ${v.status}`
         document.getElementById('buildNumber').textContent = `build ${v.build.total} - ${v.build.date}`
         document.getElementById('commitNumber').textContent = `commit ${v.commit}`
       })
     })
-}())
+})()

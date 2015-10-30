@@ -9,7 +9,7 @@
       window.moment = require('moment')
     </script>
   </head>
-  <body layout="column" ng-app="Chateo" ng-controller="appController">
+  <body layout="column" ng-app="Chateo" ng-controller="appController" ng-cloak="">
     <md-toolbar class="md-whiteframe-z2" layout="row">
       <div class="md-toolbar-tools">
         <md-button aria-label="sidebar" class="md-icon-button" hide-gt-sm ng-click="toggleSidenav('left')">
@@ -60,7 +60,7 @@
             <md-list-item ng-repeat="user in _.connectedUsers"  ng-click="openChat(user)"  class="chatList" id="list-{{ user }}">
               <p class="userSideEle">
                 <ng-md-icon icon="person" size="16"></ng-md-icon>
-                <span class="textoverflow">{{ ::user }}</span> <span id="{{ user }}" class="notificationBadge">0</span></p>
+                <span class="textoverflow">{{ user }}</span> <span id="{{ user }}" class="notificationBadge">0</span></p>
             </md-list-item>
           </md-list>
         </md-content>

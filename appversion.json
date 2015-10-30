@@ -6,11 +6,11 @@
   },
   "status": "beta",
   "build": {
-    "date": "2015.10.27",
-    "number": 1,
-    "total": 47
+    "date": "2015.10.30",
+    "number": 21,
+    "total": 67
   },
-  "commit": null,
+  "commit": "9ad5845",
   "json": [
     "package.json",
     "bower.json"

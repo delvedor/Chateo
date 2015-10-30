@@ -43,5 +43,6 @@
         .primaryPalette('grey')
     })
 
-    .run(() => {})
-}())
+    .run(() => {
+    })
+})()
