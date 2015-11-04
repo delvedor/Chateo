@@ -5,6 +5,7 @@ import airswarm from 'airswarm'
 import jsonStream from 'duplex-json-stream'
 import streamSet from 'stream-set'
 import { getAppVersion } from 'appversion'
+import { readFileSync, writeFileSync, writeFile, openSync, closeSync } from 'fs'
 // import Menu from 'menu'
 // import level from 'level'
 
@@ -20,9 +21,21 @@ app.on('window-all-closed', () => {
 })
 
 app.on('ready', () => {
+  if (process.platform !== 'darwin') {
+    try {
+      let obj = JSON.parse(readFileSync('user.json'))
+    } catch (err) {
+      let fd = openSync(('user.json'), 'wx+')
+      let json = JSON.stringify({
+          'user': null
+        }, null, 2) + '\n'
+      writeFileSync('user.json', json)
+      closeSync(fd)
+    }
+  }
   win = new BrowserWindow({
-    width: 1024,
-    height: 768
+    width: 900,
+    height: 600
   })
   // win.openDevTools()
   win.setResizable(true)
@@ -71,9 +84,9 @@ function createConnection () {
       // new user event
       if (data.type === 'newUser') {
         users.push({username: data.content, socket: socket})
-        let connectedUsers = []
+        /* let connectedUsers = []
         for (let i = 0, arrLen = users.length; i < arrLen; i++) connectedUsers.push(users[i].username)
-        win.webContents.send('connectedUsers', connectedUsers)
+        win.webContents.send('connectedUsers', connectedUsers) */
         win.webContents.send('userLogin', data.content)
       // new message event
       } else if (data.type === 'message' || data.type === 'privateMessage') {
@@ -91,11 +104,11 @@ function createConnection () {
         }
       }
       activeSockets.remove(socket)
-      let connectedUsers = []
-      for (let i = 0, arrLen = users.length; i < arrLen; i++) {
-        connectedUsers.push(users[i].username)
-      }
-      win.webContents.send('connectedUsers', connectedUsers)
+    /* let connectedUsers = []
+    for (let i = 0, arrLen = users.length; i < arrLen; i++) {
+      connectedUsers.push(users[i].username)
+    } */
+    // win.webContents.send('connectedUsers', connectedUsers)
     })
   })
 }
@@ -129,8 +142,11 @@ ipc.on('sendMessage', (event, data) => {
 // new user from browser process
 ipc.on('sendNewUser', (event, username) => {
   let bool = true
+  let usernameSwap = username.toLowerCase().replace(/\s/g, '')
   for (let i = 0, arrLen = users.length; i < arrLen; i++) {
-    if (username === users[i].username) {
+    let userArr = users[i].username.toLowerCase().replace(/\s/g, '')
+    console.log(usernameSwap + ' ' + userArr + ' ' + usernameSwap === userArr)
+    if (usernameSwap === userArr || usernameSwap === 'chateoserver' || usernameSwap === 'chat') {
       bool = false
       break
     }
@@ -140,42 +156,59 @@ ipc.on('sendNewUser', (event, username) => {
     activeSockets.forEach((s) => {
       s.write({type: 'newUser', content: user})
     })
-  }
-  event.sender.send('userAvailable', bool)
-})
-
-// version number from browser process
-ipc.on('getConnectedUsers', (event) => {
-  let connectedUsers = []
-  for (let i = 0, arrLen = users.length; i < arrLen; i++) connectedUsers.push(users[i].username)
-  win.webContents.send('connectedUsers', connectedUsers)
-})
-
-// version number from browser process
-ipc.on('getVersion', (event) => {
-  getAppVersion((err, data) => {
-    if (err) console.log(err)
-    win.webContents.send('setVersion', data)
+    if (process.platform !== 'darwin') {
+      let json = JSON.stringify({
+          user: username
+        }, null, 2) + '\n'
+      writeFile('user.json', json, (err) => {
+        if (err) console.log(err)
+        })
+      }
+    }
+    event.sender.send('userAvailable', bool)
   })
-})
 
-/*
-  Message structure:
+  // gets and array with all the active sockets
+  ipc.on('getConnectedUsers', (event) => {
+    let connectedUsers = []
+    for (let i = 0, arrLen = users.length; i < arrLen; i++) connectedUsers.push({user: users[i].username, online: true, notification: '0'})
+    win.webContents.send('connectedUsers', connectedUsers)
+  })
 
-  message: {
-    user: user,
-    time: time,
-    text: text,
-    color: color
-  }
+  // version number from browser process
+  ipc.on('getVersion', (event) => {
+    getAppVersion((err, data) => {
+      if (err) console.log(err)
+      win.webContents.send('setVersion', data)
+    })
+  })
 
-  privateMessage: {
-    user: user,
-    time: time,
-    text: text,
-    recipient: recipient,
-    color: color
-  }
+  ipc.on('pastUser', (event) => {
+    if (process.platform !== 'darwin') {
+      let obj = JSON.parse(readFileSync('user.json'))
+      event.sender.send('pastUser', obj.user)
+    } else {
+      event.sender.send('pastUser', null)
+    }
+  })
 
-  -> The color field is verbose
- */
+  /*
+    Message structure:
+
+    message: {
+      user: user,
+      time: time,
+      text: text,
+      color: color
+    }
+
+    privateMessage: {
+      user: user,
+      time: time,
+      text: text,
+      recipient: recipient,
+      color: color
+    }
+
+    -> The color field is verbose
+   */

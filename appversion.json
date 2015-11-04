@@ -2,13 +2,13 @@
   "version": {
     "major": 0,
     "minor": 1,
-    "patch": 0
+    "patch": 1
   },
   "status": "beta",
   "build": {
-    "date": "2015.10.30",
-    "number": 21,
-    "total": 67
+    "date": "2015.11.4",
+    "number": 0,
+    "total": 97
   },
   "commit": "9ad5845",
   "json": [

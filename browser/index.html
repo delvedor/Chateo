@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
   <head>
+    <link href="lib/roboto/2014/roboto-woff.css" rel="stylesheet">
     <link href="lib/angular-material/angular-material.min.css" rel="stylesheet" type="text/css">
     <link href="lib/angular-material-icons/angular-material-icons.css" rel="stylesheet" type="text/css">
     <link href="stylesheet/index.css" rel="stylesheet" type="text/css">
@@ -43,24 +44,23 @@
     </md-toolbar>
     <div flex layout="row" style="height:100%;">
       <md-sidenav class="md-sidenav-left md-whiteframe-z2" layout="column" md-component-id="left" md-is-locked-open="_.userLogged && $mdMedia('gt-sm')">
-        <md-content class="md-padding" flex layout="column">
+        <md-content flex layout="column">
           <md-list>
             <md-list-item>
               <p class="userSideEle">
                 <ng-md-icon icon="person_outline" size="16"></ng-md-icon>
-                <span class="textoverflow">{{ _.username }}</span></p>
+                <span class="textoverflow" style="margin-bottom: -2px">{{ _.username }}</span></p>
             </md-list-item>
             <md-divider></md-divider>
             <md-list-item ng-click="openChat('chat')" class="chatList" id="list-chat">
               <p class="userSideEle">
                 <ng-md-icon icon="chat" size="16"></ng-md-icon>
-                Chat <span id="chat" class="notificationBadge">0</span></p>
+                Chat <span id="chat" ng-if="_.notification !== '0'" class="notificationBadge">{{ _.notification }}</span></p>
             </md-list-item>
-            <md-divider></md-divider>
-            <md-list-item ng-repeat="user in _.connectedUsers"  ng-click="openChat(user)"  class="chatList" id="list-{{ user }}">
+            <md-list-item ng-repeat="user in _.connectedUsers track by $index"  ng-click="openChat(user.user)"  class="chatList" id="list-{{ user.user }}">
               <p class="userSideEle">
-                <ng-md-icon icon="person" size="16"></ng-md-icon>
-                <span class="textoverflow">{{ user }}</span> <span id="{{ user }}" class="notificationBadge">0</span></p>
+                <ng-md-icon icon="person" size="16" ng-style="{'color': user.online ? '#4CAF50' : '#F44336'}"></ng-md-icon>
+                <span class="textoverflow">{{ user.user }}</span> <span ng-if="user.notification !== '0'" class="notificationBadge">{{ user.notification }}</span></p>
             </md-list-item>
           </md-list>
         </md-content>

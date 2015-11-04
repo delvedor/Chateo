@@ -1,22 +1,24 @@
-<h3>Text color:</h3>
-<md-grid-list md-cols-gt-md="12" md-cols-md="8" md-cols-sm="3" md-gutter-gt-md="16px" md-gutter-gt-sm="8px" md-gutter="4px" md-row-height-gt-md="1:1" md-row-height="4:3">
-  <md-grid-tile id="000000" style="background-color:#000000" ng-click="changeColor('#000000')"></md-grid-tile>
-  <md-grid-tile id="F44336" style="background-color:#F44336" ng-click="changeColor('#F44336')"></md-grid-tile>
-  <md-grid-tile id="E91E63" style="background-color:#E91E63" ng-click="changeColor('#E91E63')"></md-grid-tile>
-  <md-grid-tile id="9C27B0" style="background-color:#9C27B0" ng-click="changeColor('#9C27B0')"></md-grid-tile>
-  <md-grid-tile id="3F51B5" style="background-color:#3F51B5" ng-click="changeColor('#3F51B5')"></md-grid-tile>
-  <md-grid-tile id="2196F3" style="background-color:#2196F3" ng-click="changeColor('#2196F3')"></md-grid-tile>
-  <md-grid-tile id="00BCD4" style="background-color:#00BCD4" ng-click="changeColor('#00BCD4')"></md-grid-tile>
-  <md-grid-tile id="4CAF50" style="background-color:#4CAF50" ng-click="changeColor('#4CAF50')"></md-grid-tile>
-  <md-grid-tile id="FF9800" style="background-color:#FF9800" ng-click="changeColor('#FF9800')"></md-grid-tile>
-  <md-grid-tile id="795548" style="background-color:#795548" ng-click="changeColor('#795548')"></md-grid-tile>
-  <md-grid-tile id="607D8B" style="background-color:#607D8B" ng-click="changeColor('#607D8B')"></md-grid-tile>
-  <md-grid-tile id="009688" style="background-color:#009688" ng-click="changeColor('#009688')"></md-grid-tile>
-</md-grid-list>
+<div class="settingsPanel">
+  <h3>Text color:</h3>
+  <md-grid-list md-cols-gt-md="12" md-cols-md="8" md-cols-sm="3" md-gutter-gt-md="16px" md-gutter-gt-sm="8px" md-gutter="4px" md-row-height-gt-md="1:1" md-row-height="4:3">
+    <md-grid-tile id="000000" ng-click="changeColor('#000000')" style="background-color:#000000"></md-grid-tile>
+    <md-grid-tile id="F44336" ng-click="changeColor('#F44336')" style="background-color:#F44336"></md-grid-tile>
+    <md-grid-tile id="E91E63" ng-click="changeColor('#E91E63')" style="background-color:#E91E63"></md-grid-tile>
+    <md-grid-tile id="9C27B0" ng-click="changeColor('#9C27B0')" style="background-color:#9C27B0"></md-grid-tile>
+    <md-grid-tile id="3F51B5" ng-click="changeColor('#3F51B5')" style="background-color:#3F51B5"></md-grid-tile>
+    <md-grid-tile id="2196F3" ng-click="changeColor('#2196F3')" style="background-color:#2196F3"></md-grid-tile>
+    <md-grid-tile id="00BCD4" ng-click="changeColor('#00BCD4')" style="background-color:#00BCD4"></md-grid-tile>
+    <md-grid-tile id="4CAF50" ng-click="changeColor('#4CAF50')" style="background-color:#4CAF50"></md-grid-tile>
+    <md-grid-tile id="FF9800" ng-click="changeColor('#FF9800')" style="background-color:#FF9800"></md-grid-tile>
+    <md-grid-tile id="795548" ng-click="changeColor('#795548')" style="background-color:#795548"></md-grid-tile>
+    <md-grid-tile id="607D8B" ng-click="changeColor('#607D8B')" style="background-color:#607D8B"></md-grid-tile>
+    <md-grid-tile id="009688" ng-click="changeColor('#009688')" style="background-color:#009688"></md-grid-tile>
+  </md-grid-list>
 
-<h3>Font Size:</h3>
-<md-radio-group ng-model="fontsize">
-  <md-radio-button ng-click="changeFontSize('1.0')" value="10">Small</md-radio-button>
-  <md-radio-button ng-click="changeFontSize('1.2')" value="12">Medium</md-radio-button>
-  <md-radio-button ng-click="changeFontSize('1.4')" value="14">Big</md-radio-button>
-</md-radio-group>
+  <h3>Font Size:</h3>
+  <md-radio-group ng-model="fontsize">
+    <md-radio-button ng-click="changeFontSize('1.0')" value="10">Small</md-radio-button>
+    <md-radio-button ng-click="changeFontSize('1.2')" value="12">Medium</md-radio-button>
+    <md-radio-button ng-click="changeFontSize('1.4')" value="14">Big</md-radio-button>
+  </md-radio-group>
+</div>

@@ -1,7 +1,7 @@
 <md-list class="chatArea" scroll-glue>
   <md-list-item class="md-3-line" ng-repeat="message in _.messages[param] track by $index" ng-class="message.user">
     <div ng-if="message.user === 'chateoserver'" class="chateoserverMessage" ng-style="{'font-size': _.fontSize}">{{ ::message.text }}</div>
-    <div class="md-avatar" ng-if="message.user !== 'chateoserver'">{{ ::getFirstLetter(message.user) }}</div>
+    <div class="md-avatar" ng-if="message.user !== 'chateoserver'" ng-style="{'color': message.color}">{{ ::getFirstLetter(message.user) }}</div>
     <div class="md-list-item-text chatMessage" layout="column"  ng-if="message.user !== 'chateoserver'">
       <h4 ng-style="{'font-size': _.fontSize}">{{ ::message.user }}</h4>
       <p ng-style="{'font-size': _.fontSize}" am-time-ago="{{ ::message.time }}"></p>
@@ -12,6 +12,6 @@
 <div class="messageArea md-whiteframe-z2">
     <md-input-container flex>
       <label>Message</label>
-      <textarea name="message" ng-model="chatMessage" ng-keyup="sendMessage($event)"></textarea>
+      <textarea name="message" ng-model="chatMessage" ng-keyup="sendMessage($event)" ng-disabled="isOnline(param)" id="textarea"></textarea>
     </md-input-container>
 </div>

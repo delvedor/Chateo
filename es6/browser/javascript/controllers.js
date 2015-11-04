@@ -11,6 +11,7 @@ import ipc from 'ipc'
         messages: {
           'chat': []
         },
+        notification: '0',
         connectedUsers: [],
         openWebsite: () => {
           require('shell').openExternal('http://www.entract.it/')
@@ -40,25 +41,97 @@ import ipc from 'ipc'
         $location.path(`/chat/${chatName}`)
       }
 
+      $scope.isOnline = (user) => {
+        if (user === 'chat') return false
+        for (let i = 0, len = $scope._.connectedUsers.length; i < len; i++) {
+          if ($scope._.connectedUsers[i].user === user) return !$scope._.connectedUsers[i].online
+        }
+      }
+
+      let checkConnectedUsers = (user) => {
+        for (let i = 0, len = $scope._.connectedUsers.length; i < len; i++) {
+          if ($scope._.connectedUsers[i].user === user) return true
+        }
+        return false
+      }
+
+      let setOnline = (user, online) => {
+        for (let i = 0, len = $scope._.connectedUsers.length; i < len; i++) {
+          if ($scope._.connectedUsers[i].user === user) $scope._.connectedUsers[i].online = online
+        }
+      }
+
+      let getIndex = (user) => {
+        for (let i = 0, len = $scope._.connectedUsers.length; i < len; i++) {
+          if ($scope._.connectedUsers[i].user === user) return i
+        }
+      }
+
+      let moveToTop = (pos) => {
+        $timeout(() => {
+          let swap = $scope._.connectedUsers[pos]
+          $scope._.connectedUsers.splice(pos, 1)
+          $scope._.connectedUsers.unshift(swap)
+          $scope.$apply()
+        })
+      }
+
+      let addNotification = (user) => {
+        $timeout(() => {
+          if (user === 'chat') {
+            if ($scope._.notification === '99' || $scope._.notification === '99+') {
+              $scope._.notification = '99+'
+            } else {
+              $scope._.notification = `${Number($scope._.notification) + 1}`
+            }
+          } else {
+            let index = getIndex(user)
+            let notification = $scope._.connectedUsers[index].notification
+            if (notification === '99' || notification === '99+') {
+              notification = '99+'
+            } else {
+              notification = `${Number(notification) + 1}`
+            }
+            $scope._.connectedUsers[index].notification = notification
+          }
+          $scope.$apply()
+        })
+      }
+
+      let removeNotification = (user) => {
+        $timeout(() => {
+          let index = getIndex(user)
+          $scope._.connectedUsers[index].notification = '0'
+          $scope.$apply()
+        })
+      }
+
       ipc.on('connectedUsers', (connectedUsers) => {
         $timeout(() => {
-          $scope._.connectedUsers = connectedUsers
+          let bool
+          for (let i = 0; i < connectedUsers.length; i++) {
+            if (!checkConnectedUsers(connectedUsers[i].user)) $scope._.connectedUsers.push(connectedUsers[i])
+          }
           $scope.$apply()
         })
       })
 
       ipc.on('userLogin', (user) => {
         $timeout(() => {
-          let date = new Date()
-          $scope._.messages.chat.push({user: 'chateoserver', text: `${date.getHours()}.${date.getMinutes()}: ${user} connected`})
+          if (checkConnectedUsers(user)) {
+            setOnline(user, true)
+          } else {
+            $scope._.connectedUsers.push({user: user, online: true, notification: '0'})
+          }
+          $scope._.messages.chat.push({user: 'chateoserver', text: `${user} connected`})
           $scope.$apply()
         })
       })
 
       ipc.on('userLogout', (user) => {
         $timeout(() => {
-          let date = new Date()
-          $scope._.messages.chat.push({user: 'chateoserver', text: `${date.getHours()}.${date.getMinutes()}: ${user} disconnected`})
+          setOnline(user, false)
+          $scope._.messages.chat.push({user: 'chateoserver', text: `${user} disconnected`})
           $scope.$apply()
         })
       })
@@ -66,23 +139,16 @@ import ipc from 'ipc'
       ipc.on('newMessage', (msg) => {
         $timeout(() => {
           let element = null
-          if (!$scope._.connectedUsers[msg.content.user]) ipc.send('getConnectedUsers')
+          if (!checkConnectedUsers(msg.content.user)) ipc.send('getConnectedUsers')
           if (msg.type === 'message') {
             $scope._.messages.chat.push(msg.content)
-            // if ($scope._.messages.chat.length > 1000) $scope._.messages.chat.shift() // keeps in the UI only the last 1000 messages
-            if ($routeParams.chat !== 'chat') element = document.getElementById('chat')
+            addNotification('chat')
+          // if ($scope._.messages.chat.length > 1000) $scope._.messages.chat.shift() // keeps in the UI only the last 1000 messages
           } else if (msg.type === 'privateMessage') {
+            moveToTop(getIndex(msg.content.user))
             if (!$scope._.messages[msg.content.user]) $scope._.messages[msg.content.user] = []
             $scope._.messages[msg.content.user].push(msg.content)
-            if ($routeParams.chat !== msg.content.user) element = document.getElementById(msg.content.user)
-          }
-          if (element) {
-            element.style.display = 'inline-block'
-            if (element.textContent === '99' || element.textContent === '99+') {
-              element.textContent = '99+'
-            } else {
-              element.textContent = Number(element.textContent) + 1
-            }
+            addNotification(msg.content.user)
           }
           $scope.$apply()
         })
@@ -93,25 +159,44 @@ import ipc from 'ipc'
         let ele = document.getElementsByClassName('chatList')
         for (let i = 0, len = ele.length; i < len; i++) ele[i].classList.remove('activeBackground')
         if (current.params.chat) {
+          $timeout(() => {
+            document.getElementById('textarea').focus()
+          })
           document.getElementById(`list-${current.params.chat}`).classList.add('activeBackground')
           ele = document.getElementById(current.params.chat)
-          if (ele.style.display !== 'none') {
-            ele.textContent = 0
-            ele.style.display = 'none'
+          if (ele && current.params.chat === 'chat') {
+            if (ele.style.display !== 'none') {
+              ele.textContent = 0
+              ele.style.display = 'none'
+            }
+          } else if (current.params.chat !== 'chat') {
+            removeNotification(current.params.chat)
           }
         }
       })
     })
 
     .controller('loginController', ($scope, $location, $mdToast) => {
-      $scope.login = (username) => {
+      ipc.send('pastUser')
+
+      ipc.on('pastUser', function (user) {
+        if (user && user !== 'null') {
+          document.getElementById('userLogin').value = user
+          document.getElementById('userLogin').focus()
+        }
+      })
+      $scope.login = () => {
+        let username = document.getElementById('userLogin').value
+        console.log(username)
         if (!username) return
+        username = username.trim()
         ipc.send('sendNewUser', username)
         ipc.on('userAvailable', (bool) => {
           if (bool) {
             $scope._.username = username
             $scope._.userLogged = true
             $location.path('/chat/chat')
+            $scope.$apply()
           } else {
             $mdToast.show(
               $mdToast.simple()

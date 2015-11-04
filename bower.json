@@ -1,6 +1,6 @@
 {
   "name": "chateo",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/delvedor/Chateo",
   "authors": [
     "delvedor"
@@ -23,6 +23,7 @@
     "angular-route": "~1.4.7",
     "angular-material-icons": "~0.6.0",
     "angular-scroll-glue": "~2.0.6",
-    "angular-moment": "~0.10.3"
+    "angular-moment": "~0.10.3",
+    "roboto": "https://github.com/sopro-components/roboto.git#~0.1.0"
   }
 }

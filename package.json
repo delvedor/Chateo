@@ -1,12 +1,13 @@
 {
   "name": "chateo",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A simple p2p lan chat.",
   "main": "app/main.js",
   "scripts": {
     "start": "electron .",
     "build:es6": "apv update build && babel es6 --watch --out-dir ./",
     "build:win": "apv update build && npm run clean && electron-packager \"./\" \"Chateo\" --out=\"buildOS/win\" --platform=\"win32\" --arch=\"x64\" --version=\"0.34.0\" --ignore=\"(buildOS|node_modules/\\.bin|node_modules/electron-builder|node_modules/electron-packager|node_modules/electron-prebuilt|es6|README.md)\" app-version=\"0.0.0\" --asar",
+    "build:macos": "apv update build && npm run clean && electron-packager ./ \"Chateo\" --out=\"buildOS/macos\" --platform=\"darwin\" --arch=\"x64\" --version=\"0.34.0\" --ignore=\"(buildOS|node_modules/\\.bin|node_modules/electron-builder|node_modules/electron-packager|node_modules/electron-prebuilt|es6|README.md)\"  --asar",
     "clean": "rm -rf buildOS"
   },
   "repository": {
