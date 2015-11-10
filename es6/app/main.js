@@ -193,15 +193,16 @@ ipc.on('sendNewUser', (event, username) => {
   })
 
   /*
-    Message structure:
+    Message notification, test win.flashFrame(flag)
+    -> https://github.com/atom/electron/blob/master/docs/api/browser-window.md
 
+    Message structure:
     message: {
       user: user,
       time: time,
       text: text,
       color: color
     }
-
     privateMessage: {
       user: user,
       time: time,

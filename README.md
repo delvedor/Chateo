@@ -14,6 +14,15 @@ $ npm run build:es6
 $ npm start
 ```
 
+## TODO
+- [ ] Change username inside the chat without relaunch the whole app.
+- [ ] Save in a settings.json the username *(now in user.json)* and all the settings
+- [ ] On Mac Chateo must create a backup folder in Documents
+- [ ] Implement backup via LevelDB on Windows and Mac
+- [ ] Bigger autofocus area in the input area
+- [ ] Implement copy and paste
+- [ ] Notify the user when a message arrives and the window is not focused.
+
 ## Contributing
 If you feel you can help in any way, be it with examples, extra testing, or new features please open a pull request or open an issue.  
 

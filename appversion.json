@@ -7,10 +7,10 @@
   "status": "beta",
   "build": {
     "date": "2015.11.4",
-    "number": 0,
-    "total": 97
+    "number": 8,
+    "total": 105
   },
-  "commit": "9ad5845",
+  "commit": "457952d",
   "json": [
     "package.json",
     "bower.json"

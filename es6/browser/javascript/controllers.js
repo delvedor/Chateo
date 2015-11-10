@@ -142,13 +142,15 @@ import ipc from 'ipc'
           if (!checkConnectedUsers(msg.content.user)) ipc.send('getConnectedUsers')
           if (msg.type === 'message') {
             $scope._.messages.chat.push(msg.content)
-            addNotification('chat')
+            if ($routeParams.chat !== 'chat') addNotification('chat')
           // if ($scope._.messages.chat.length > 1000) $scope._.messages.chat.shift() // keeps in the UI only the last 1000 messages
           } else if (msg.type === 'privateMessage') {
-            moveToTop(getIndex(msg.content.user))
             if (!$scope._.messages[msg.content.user]) $scope._.messages[msg.content.user] = []
             $scope._.messages[msg.content.user].push(msg.content)
-            addNotification(msg.content.user)
+            if ($routeParams.chat !== msg.content.user) {
+              moveToTop(getIndex(msg.content.user))
+              addNotification(msg.content.user)
+            }
           }
           $scope.$apply()
         })
