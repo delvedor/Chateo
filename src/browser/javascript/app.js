@@ -1,5 +1,5 @@
 ;(() => {
-  angular.module('Chateo', ['ngRoute', 'ngMaterial', 'ngAnimate', 'ngMdIcons', 'luegg.directives', 'angularMoment'])
+  angular.module('Chateo', ['ngRoute', 'ngMaterial', 'ngAnimate', 'ngMdIcons', 'luegg.directives', 'angularMoment']) // eslint-disable-line
 
     .config(($routeProvider) => {
       $routeProvider

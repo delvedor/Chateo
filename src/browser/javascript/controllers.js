@@ -1,7 +1,7 @@
-import ipc from 'ipc'
+import { ipcRenderer } from 'electron'
 
 ;(() => {
-  angular.module('Chateo')
+  angular.module('Chateo') // eslint-disable-line
     .controller('appController', ($scope, $mdSidenav, $location, $timeout, $routeParams, $mdToast) => {
       $scope._ = {
         userLogged: false,
@@ -106,9 +106,9 @@ import ipc from 'ipc'
         })
       }
 
-      ipc.on('connectedUsers', (connectedUsers) => {
+      ipcRenderer.on('connectedUsers', (event, connectedUsers) => {
         $timeout(() => {
-          let bool
+          // let bool
           for (let i = 0; i < connectedUsers.length; i++) {
             if (!checkConnectedUsers(connectedUsers[i].user)) $scope._.connectedUsers.push(connectedUsers[i])
           }
@@ -116,7 +116,7 @@ import ipc from 'ipc'
         })
       })
 
-      ipc.on('userLogin', (user) => {
+      ipcRenderer.on('userLogin', (event, user) => {
         $timeout(() => {
           if (checkConnectedUsers(user)) {
             setOnline(user, true)
@@ -128,7 +128,7 @@ import ipc from 'ipc'
         })
       })
 
-      ipc.on('userLogout', (user) => {
+      ipcRenderer.on('userLogout', (event, user) => {
         $timeout(() => {
           setOnline(user, false)
           $scope._.messages.chat.push({user: 'chateoserver', text: `${user} disconnected`})
@@ -136,10 +136,10 @@ import ipc from 'ipc'
         })
       })
 
-      ipc.on('newMessage', (msg) => {
+      ipcRenderer.on('newMessage', (event, msg) => {
         $timeout(() => {
-          let element = null
-          if (!checkConnectedUsers(msg.content.user)) ipc.send('getConnectedUsers')
+          // let element = null
+          if (!checkConnectedUsers(msg.content.user)) ipcRenderer.send('getConnectedUsers')
           if (msg.type === 'message') {
             $scope._.messages.chat.push(msg.content)
             if ($routeParams.chat !== 'chat') addNotification('chat')
@@ -157,7 +157,7 @@ import ipc from 'ipc'
       })
 
       $scope.$on('$routeChangeSuccess', function (next, current, previous) {
-        if (previous && previous.loadedTemplateUrl === 'templates/login.html') ipc.send('getConnectedUsers')
+        if (previous && previous.loadedTemplateUrl === 'templates/login.html') ipcRenderer.send('getConnectedUsers')
         let ele = document.getElementsByClassName('chatList')
         for (let i = 0, len = ele.length; i < len; i++) ele[i].classList.remove('activeBackground')
         if (current.params.chat) {
@@ -179,9 +179,10 @@ import ipc from 'ipc'
     })
 
     .controller('loginController', ($scope, $location, $mdToast) => {
-      ipc.send('pastUser')
+      ipcRenderer.send('pastUser')
 
-      ipc.on('pastUser', function (user) {
+      ipcRenderer.on('pastUser', function (event, user) {
+        console.log(user)
         if (user && user !== 'null') {
           document.getElementById('userLogin').value = user
           document.getElementById('userLogin').focus()
@@ -192,8 +193,8 @@ import ipc from 'ipc'
         console.log(username)
         if (!username) return
         username = username.trim()
-        ipc.send('sendNewUser', username)
-        ipc.on('userAvailable', (bool) => {
+        ipcRenderer.send('sendNewUser', username)
+        ipcRenderer.on('userAvailable', (event, bool) => {
           if (bool) {
             $scope._.username = username
             $scope._.userLogged = true
@@ -233,11 +234,11 @@ import ipc from 'ipc'
           if (keyEvent.which === 13) {
             let time = new Date().getTime()
             if ($scope.param === 'chat') {
-              ipc.send('sendMessage', {user: $scope._.username, time: time, text: $scope.chatMessage, color: $scope._.color})
+              ipcRenderer.send('sendMessage', {user: $scope._.username, time: time, text: $scope.chatMessage, color: $scope._.color})
               $scope._.messages.chat.push({user: $scope._.username, time: time, text: $scope.chatMessage, color: $scope._.color})
             } else {
               if (!$scope._.messages[$scope.param]) $scope._.messages[$scope.param] = []
-              ipc.send('sendMessage', {user: $scope._.username, time: time, text: $scope.chatMessage, recipient: $scope.param, color: $scope._.color})
+              ipcRenderer.send('sendMessage', {user: $scope._.username, time: time, text: $scope.chatMessage, recipient: $scope.param, color: $scope._.color})
               $scope._.messages[$scope.param].push({user: $scope._.username, time: time, text: $scope.chatMessage, recipient: $scope.param, color: $scope._.color})
             }
             $scope.$apply()
@@ -248,8 +249,8 @@ import ipc from 'ipc'
     })
 
     .controller('infoController', ($scope) => {
-      ipc.send('getVersion')
-      ipc.on('setVersion', (v) => {
+      ipcRenderer.send('getVersion')
+      ipcRenderer.on('setVersion', (event, v) => {
         document.getElementById('versionNumber').textContent = `delvedor v${v.version.major}.${v.version.minor}.${v.version.patch} - ${v.status}`
         document.getElementById('buildNumber').textContent = `build ${v.build.total} - ${v.build.date}`
         document.getElementById('commitNumber').textContent = `commit ${v.commit}`

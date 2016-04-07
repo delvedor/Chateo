@@ -1,6 +1,6 @@
-browser/javascript/
-browser/lib/
-app/main.js
+lib/browser/javascript/
+lib/browser/lib/
+lib/app/main.js
 node_modules
 npm-debug.log
 .DS_Store
